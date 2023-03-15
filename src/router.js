@@ -8,7 +8,9 @@ const {
     updateUser
 } = require('./controllers/users');
 const {
-    listTransactions
+    listTransactions,
+    detailTransaction,
+    registerTransaction
 } = require('./controllers/transactions')
 
 const router = express();
@@ -24,5 +26,7 @@ router.get('/categoria', verifyLogin, listCategories);
 
 //transactions
 router.get('/transacao', verifyLogin, listTransactions);
+router.get('/transacao/:id', verifyLogin, detailTransaction);
+router.post('/transacao', verifyLogin, registerTransaction);
 
 module.exports = router;
