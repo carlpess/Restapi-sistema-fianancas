@@ -91,7 +91,54 @@ const login = async (req, res) => {
     }
 }
 
+const detailUser = async (req, res) => {
+    const { usuario } = req;
+
+    res.status(200).json(usuario);
+}
+
+const updateUser = async (req, res) => {
+    const { nome, email, senha } = req.body;
+    const { usuario } = req;
+
+    const schema = yup.object().shape({
+        nome: yup.string(),
+        email: yup.string().email(),
+        senha: yup.string().min(8)
+    });
+
+    try {
+        await schema.validate(req.body);
+
+        const userFound = await connection('usuarios').where({ email }).first()
+
+        if (!userFound) {
+            return res.status(400).json('O email informado já está cadastrado.')
+        }
+
+
+        const hash = (await pwd.hash(Buffer.from(senha))).toString('hex');
+
+        const updatedUser = await connection('usuarios')
+            .update({
+                nome,
+                email,
+                senha: hash,
+            }).where({ id: usuario.id })
+
+        if (!updatedUser) {
+            return res.status(400).json('Não foi possivel atualizar cadastro do usuario.')
+        }
+
+        return res.status(204).json();
+    } catch (e) {
+        return res.status(500).json(e.message);
+    }
+}
+
 module.exports = {
     registerUser,
-    login
+    login,
+    detailUser,
+    updateUser
 }
