@@ -3,7 +3,7 @@ const securePassword = require('secure-password');
 const jwt = require('jsonwebtoken');
 const yup = require("yup");
 const { pt } = require("yup-locales");
-const secret = require('../secret');
+
 yup.setLocale(pt);
 
 const pwd = securePassword();
@@ -83,7 +83,7 @@ const login = async (req, res) => {
 
         const { senha: _, ...usuario } = user;
 
-        const token = jwt.sign({ id: user.id }, secret);
+        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
 
         return res.status(200).json({ usuario, token });
     } catch (e) {
