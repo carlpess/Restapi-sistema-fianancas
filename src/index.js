@@ -9,4 +9,4 @@ app.use(cors());
 app.use(express.json());
 app.use(router);
 
-app.listen(process.env.PORT || 5432);
+app.listen(process.env.PORT || 3003);
