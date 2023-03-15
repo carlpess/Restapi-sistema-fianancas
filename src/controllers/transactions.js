@@ -182,10 +182,36 @@ const deleteTransaction = async (req, res) => {
     }
 }
 
+const transactionStatement = async (req, res) => {
+    const { usuario } = req;
+
+    const statement = {
+        entrada: 0,
+        saida: 0
+    }
+
+    try {
+        const transactions = await connection('transacoes').where({ usuario_id: usuario.id });
+
+        transactions.forEach(transaction => {
+            if (transaction.tipo === 'entrada') {
+                statement.entrada += transaction.valor;
+            } else if (transaction.tipo === 'saida') {
+                statement.saida += transaction.valor;
+            }
+        });
+
+        return res.status(200).json(statement);
+    } catch (e) {
+        return res.status(500).json(e.message);
+    }
+}
+
 module.exports = {
     listTransactions,
     detailTransaction,
     registerTransaction,
     updateTransaction,
-    deleteTransaction
+    deleteTransaction,
+    transactionStatement
 }
