@@ -10,7 +10,9 @@ const {
 const {
     listTransactions,
     detailTransaction,
-    registerTransaction
+    registerTransaction,
+    updateTransaction,
+    deleteTransaction
 } = require('./controllers/transactions')
 
 const router = express();
@@ -28,5 +30,7 @@ router.get('/categoria', verifyLogin, listCategories);
 router.get('/transacao', verifyLogin, listTransactions);
 router.get('/transacao/:id', verifyLogin, detailTransaction);
 router.post('/transacao', verifyLogin, registerTransaction);
+router.put('/transacao/:id', verifyLogin, updateTransaction);
+router.delete('/transacao/:id', verifyLogin, deleteTransaction);
 
 module.exports = router;
