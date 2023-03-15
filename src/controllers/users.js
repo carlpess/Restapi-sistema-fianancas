@@ -1,4 +1,4 @@
-const connection = require('../conexao');
+const connection = require('../connection');
 const securePassword = require('secure-password');
 const jwt = require('jsonwebtoken');
 const yup = require("yup");

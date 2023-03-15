@@ -1,4 +1,4 @@
-const connection = require('../conexao');
+const connection = require('../connection');
 const yup = require("yup");
 const { pt } = require("yup-locales");
 yup.setLocale(pt);
