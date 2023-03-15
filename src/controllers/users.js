@@ -45,6 +45,53 @@ const registerUser = async (req, res) => {
     }
 }
 
+const login = async (req, res) => {
+    const { email, senha } = req.body;
+
+    const schema = yup.object().shape({
+        email: yup.string().email().required(),
+        senha: yup.string().min(8).required()
+    })
+
+    try {
+        await schema.validate(req.body);
+
+        const user = await connection('usuarios').where({ email }).first();
+
+        if (!user) {
+            return res.status(404).json('Usuario não encontrado.');
+        }
+
+        const result = await pwd.verify(
+            Buffer.from(senha),
+            Buffer.from(user.senha, "hex")
+        );
+
+        switch (result) {
+            case securePassword.INVALID_UNRECOGNIZED_HASH:
+            case securePassword.INVALID:
+                return res.status(400).json('Senha ou email incorretos');
+            case securePassword.VALID:
+                break;
+            case securePassword.VALID_NEEDS_REHASH:
+                try {
+                    const hash = (await pwd.hash(Buffer.from(senha))).toString('hex');
+                    await connection('usuarios').update({ senha: hash }).where({ email });
+                } catch { }
+                break;
+        }
+
+        const { senha: _, ...usuario } = user;
+
+        const token = jwt.sign({ id: user.id }, secret);
+
+        return res.status(200).json({ usuario, token });
+    } catch (e) {
+        return res.status(500).json(e.message);
+    }
+}
+
 module.exports = {
-    registerUser
+    registerUser,
+    login
 }
